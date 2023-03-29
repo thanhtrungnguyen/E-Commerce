@@ -1,10 +1,5 @@
 ﻿using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.Data
 {
@@ -17,11 +12,13 @@ namespace DAL.Data
         public DbSet<ProductSku> ProductSkus { get; set; }
         public DbSet<ProductSkuValue> ProductSkuValues { get; set; }
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<User> Users { get; set; }
 
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder
                .Entity<ProductSku>()
                .HasKey(ps => new { ps.ProductId, ps.Id });

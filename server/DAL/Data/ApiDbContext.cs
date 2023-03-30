@@ -42,17 +42,12 @@ namespace DAL.Data
                 .Entity<ProductSkuValue>()
                 .HasOne(psv => psv.ProductSku)
                 .WithMany(ps => ps.ProductSkuValues)
-                .HasForeignKey(x => new { x.ProductId, x.Id })
+                .HasForeignKey(x => new { x.ProductId, x.ProductSkuId })
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder
                 .Entity<ProductSkuValue>()
                 .HasKey(psv => new { psv.ProductId, psv.ProductSkuId, psv.OptionId });
-
-            modelBuilder
-                .Entity<ProductSkuValue>()
-                .Property(psv => psv.Id)
-                .ValueGeneratedOnAdd();
 
             modelBuilder
                 .Entity<ProductSkuValue>()

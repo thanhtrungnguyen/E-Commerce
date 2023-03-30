@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230330044158_add price to table ProductSkus database")]
+    partial class addpricetotableProductSkusdatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,8 +86,7 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BrandId")
-                        .IsRequired()
+                    b.Property<int>("BrandId")
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -103,9 +105,6 @@ namespace DAL.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Price")
-                        .HasColumnType("float");
 
                     b.Property<string>("Sku")
                         .HasColumnType("nvarchar(max)");
@@ -191,9 +190,6 @@ namespace DAL.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
                     b.Property<string>("Sku")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -219,13 +215,22 @@ namespace DAL.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
                     b.Property<int>("ValueId")
                         .HasColumnType("int");
 
                     b.HasKey("ProductId", "ProductSkuId", "OptionId");
+
+                    b.HasIndex("ProductId", "Id");
 
                     b.HasIndex("ProductId", "OptionId", "ValueId");
 
@@ -338,15 +343,15 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.ProductSkuValue", b =>
                 {
-                    b.HasOne("DAL.Entities.ProductOption", "ProductOption")
+                    b.HasOne("DAL.Entities.ProductSku", "ProductSku")
                         .WithMany("ProductSkuValues")
-                        .HasForeignKey("ProductId", "OptionId")
+                        .HasForeignKey("ProductId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DAL.Entities.ProductSku", "ProductSku")
+                    b.HasOne("DAL.Entities.ProductOption", "ProductOption")
                         .WithMany("ProductSkuValues")
-                        .HasForeignKey("ProductId", "ProductSkuId")
+                        .HasForeignKey("ProductId", "OptionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DAL.Primitives
 {
-    public class Entity : SaveConfig
+    public class SaveConfig
     {
-        public int Id { get; set; }
-
+        public DateTime CreatedTime { get; set; }
+        public DateTime? ModifiedTime { get; set; }
     }
 }

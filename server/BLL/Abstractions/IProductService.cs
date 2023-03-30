@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DTO.ProductDTO.Create;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace BLL.Abstractions
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetAllProducts();
-        Task<IEnumerable<Product>?> GetProductsPagination(int page, int numberOfProducts);
-        Task<Product?> GetProduct(int id);
-        Task<bool> AddProduct(Product product);
-        Task<bool> UpdateProduct(Product product);
-        Task<bool> DeleteProduct(int id);
+        Task<(bool IsError, IEnumerable<Product> products, string ErrorMessage)> GetAllProducts();
+        Task<(bool IsError, IEnumerable<Product>? products, string ErrorMessage)> GetProductsPagination(int page, int numberOfProducts);
+        Task<(bool IsError, Product? product, string ErrorMessage)> GetProduct(int id);
+        Task<(bool IsError, string ErrorMessage)> AddProduct(CreateProductRequest createProductRequest);
+        Task<(bool IsError, string ErrorMessage)> UpdateProduct(Product product);
+        Task<(bool IsError, string ErrorMessage)> DeleteProduct(int id);
     }
 }

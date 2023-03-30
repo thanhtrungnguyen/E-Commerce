@@ -10,10 +10,10 @@ namespace DAL.Abstractions
     {
         IProductRepository Products { get; }
         ICategoryRepository Categories { get; }
-        IProductOptionRepository Options { get; }
-        IProductOptionValueRepository OptionValues { get; }
+        IProductOptionRepository ProductOptions { get; }
+        IProductOptionValueRepository ProductOptionValues { get; }
         IProductSkuRepository ProductSkus { get; }
-        IProductSkuValueRepository SkuValues { get; }
+        IProductSkuValueRepository ProductSkuValues { get; }
         IBrandRepository Brands { get; }
         IUserRepository Users { get; }
 

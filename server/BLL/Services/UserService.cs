@@ -86,14 +86,10 @@ namespace BLL.Services
             return false;
         }
 
-        public async Task<bool> CheckExistUsernameAndPassword(string username, string password)
+        public async Task<User>? CheckExistUsernameAndPassword(string username, string password)
         {
             var userExist = await _unitOfWork.Users.FindByUsernameAndPasswordAsync(username, password);
-            if (userExist != null)
-            {
-                return true;
-            }
-            return false;
+            return userExist;
         }
 
     }

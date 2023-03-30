@@ -15,5 +15,12 @@ namespace DAL.Entities
         public string Name { get; set; }
         public virtual ProductOption ProductOption { get; set; }
         public virtual ICollection<ProductSkuValue> ProductSkuValues { get; set; }
+
+        public ProductOptionValue(int productId, int optionId, string name)
+        {
+            ProductId = productId;
+            OptionId = optionId;
+            Name = name;
+        }
     }
 }

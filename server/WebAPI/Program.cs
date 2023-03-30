@@ -51,6 +51,7 @@ builder.Services.AddAutoMapper(Assembly.Load("DTO"));
 // BLL
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 // DAL
 builder.Services.AddDbContext<ApiDbContext>(options =>

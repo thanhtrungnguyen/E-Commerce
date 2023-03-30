@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230330103739_fix price to table ProductSkus database4")]
+    partial class fixpricetotableProductSkusdatabase4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -216,6 +219,10 @@ namespace DAL.Migrations
                     b.Property<int>("OptionId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
@@ -225,7 +232,9 @@ namespace DAL.Migrations
                     b.Property<int>("ValueId")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductId", "ProductSkuId", "OptionId");
+                    b.HasKey("ProductId", "ProductSkuId", "OptionId", "Id");
+
+                    b.HasIndex("ProductId", "Id");
 
                     b.HasIndex("ProductId", "OptionId", "ValueId");
 
@@ -338,15 +347,15 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.ProductSkuValue", b =>
                 {
-                    b.HasOne("DAL.Entities.ProductOption", "ProductOption")
+                    b.HasOne("DAL.Entities.ProductSku", "ProductSku")
                         .WithMany("ProductSkuValues")
-                        .HasForeignKey("ProductId", "OptionId")
+                        .HasForeignKey("ProductId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DAL.Entities.ProductSku", "ProductSku")
+                    b.HasOne("DAL.Entities.ProductOption", "ProductOption")
                         .WithMany("ProductSkuValues")
-                        .HasForeignKey("ProductId", "ProductSkuId")
+                        .HasForeignKey("ProductId", "OptionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

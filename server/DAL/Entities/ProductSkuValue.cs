@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Entities
 {
-    public class ProductSkuValue : Entity
+    public class ProductSkuValue : SaveConfig
     {
 
         public int ProductId { get; set; }
@@ -18,5 +18,13 @@ namespace DAL.Entities
         public virtual ProductSku ProductSku { get; set; }
         public virtual ProductOption ProductOption { get; set; }
         public virtual ProductOptionValue ProductOptionValue { get; set; }
+
+        public ProductSkuValue(int productId, int productSkuId, int optionId, int valueId)
+        {
+            ProductId = productId;
+            ProductSkuId = productSkuId;
+            OptionId = optionId;
+            ValueId = valueId;
+        }
     }
 }

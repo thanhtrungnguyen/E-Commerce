@@ -16,10 +16,10 @@ namespace DAL.Data
         private readonly ApiDbContext _context;
         public IProductRepository Products { get; private set; }
         public ICategoryRepository Categories { get; private set; }
-        public IProductOptionRepository Options { get; private set; }
-        public IProductOptionValueRepository OptionValues { get; private set; }
+        public IProductOptionRepository ProductOptions { get; private set; }
+        public IProductOptionValueRepository ProductOptionValues { get; private set; }
         public IProductSkuRepository ProductSkus { get; private set; }
-        public IProductSkuValueRepository SkuValues { get; private set; }
+        public IProductSkuValueRepository ProductSkuValues { get; private set; }
         public IBrandRepository Brands { get; private set; }
         public IUserRepository Users { get; private set; }
 
@@ -29,10 +29,10 @@ namespace DAL.Data
             ILogger _logger = loggerFactory.CreateLogger("logs");
             Products = new ProductRepository(context, _logger);
             Categories = new CategoryRepository(context, _logger);
-            Options = new ProductOptionRepository(context, _logger);
-            OptionValues = new ProductOptionValueRepository(context, _logger);
+            ProductOptions = new ProductOptionRepository(context, _logger);
+            ProductOptionValues = new ProductOptionValueRepository(context, _logger);
             ProductSkus = new ProductSkuRepository(context, _logger);
-            SkuValues = new ProductSkuValueRepository(context, _logger);
+            ProductSkuValues = new ProductSkuValueRepository(context, _logger);
             Brands = new BrandRepository(context, _logger);
             Users = new UserRepository(context, _logger);
         }

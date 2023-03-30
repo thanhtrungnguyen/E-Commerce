@@ -11,7 +11,14 @@ namespace DAL.Entities
     {
         public int ProductId { get; set; }
         public string Sku { get; set; } = string.Empty;
+        public double Price { get; set; }
         public virtual Product Product { get; set; }
         public virtual List<ProductSkuValue> ProductSkuValues { get; set; }
+        public ProductSku(int productId, string sku, double price)
+        {
+            ProductId = productId;
+            Sku = sku;
+            Price = price;
+        }
     }
 }

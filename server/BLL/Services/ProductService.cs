@@ -4,6 +4,7 @@ using DAL.Abstractions;
 using DAL.Entities;
 using DTO.ProductDTO.Create;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,7 @@ namespace BLL.Services
                 await _unitOfWork.Products.Add(product);
                 await _unitOfWork.CompleteAsync();
                 int productId = product.Id;
+
                 // add to table ProductOptions
                 List<DAL.Entities.ProductOption> productOptions = new List<DAL.Entities.ProductOption>();
                 cpr.ProductOptions.ForEach(po =>
@@ -51,6 +53,7 @@ namespace BLL.Services
                     _unitOfWork.ProductOptions.Add(po);
                 });
                 await _unitOfWork.CompleteAsync();
+
                 // add to table ProductOptionValues
                 List<ProductOptionValue> optionValues = new List<ProductOptionValue>();
                 for (int i = 0; i < productOptions.Count; i++)
@@ -66,6 +69,7 @@ namespace BLL.Services
                     _unitOfWork.ProductOptionValues.Add(pov);
                 });
                 await _unitOfWork.CompleteAsync();
+
                 // add to table ProductSkus
                 List<DAL.Entities.ProductSku> productSkus = new List<DAL.Entities.ProductSku>();
                 cpr.ProductSkus.ForEach(ps =>
@@ -78,19 +82,28 @@ namespace BLL.Services
                     _unitOfWork.ProductSkus.Add(ps);
                 });
                 await _unitOfWork.CompleteAsync();
+
                 // add to table ProductSkuValues
                 List<ProductSkuValue> productSkuValues = new List<ProductSkuValue>();
-                productSkus.ForEach(ps =>
+                int count = 0;
+                for (int i = 0; i < productSkus.Count; i++)
                 {
-                    optionValues.ForEach(pov =>
+                    cpr.ProductSkus[i].OptionValueNames.ForEach(povn =>
                     {
-                        ProductSkuValue psv = new ProductSkuValue(productId, ps.Id, pov.OptionId, pov.Id);
-                        productSkuValues.Add(psv);
+                        count = 0;
+                        optionValues.ForEach(pov =>
+                        {
+                            if (povn == pov.Name && count == 0)
+                            {
+                                ProductSkuValue psv = new ProductSkuValue(productId, productSkus[i].Id, pov.OptionId, pov.Id);
+                                _unitOfWork.ProductSkuValues.Add(psv);
+                                count++;
+                            }
+                        });
                     });
-                });
+                }
                 await _unitOfWork.CompleteAsync();
                 return (true, productId.ToString());
-
             }
             catch (Exception ex)
             {
@@ -104,14 +117,33 @@ namespace BLL.Services
             throw new NotImplementedException();
         }
 
-        public Task<(bool IsError, IEnumerable<Product> products, string ErrorMessage)> GetAllProducts()
+        public async Task<(bool IsError, IEnumerable<Product> products, string ErrorMessage)> GetAllProducts()
         {
-            throw new NotImplementedException();
+            IEnumerable<Product> products = Enumerable.Empty<Product>();
+            try
+            {
+                products = await _unitOfWork.Products.GetAll();
+
+                return (false, products, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return (true, products, ex.Message);
+            }
         }
 
-        public Task<(bool IsError, Product? product, string ErrorMessage)> GetProduct(int id)
+        public async Task<(bool IsError, Product? product, string ErrorMessage)> GetProduct(int id)
         {
-            throw new NotImplementedException();
+            Product? product = null;
+            try
+            {
+                product = await _unitOfWork.Products.GetProductDetailById(id);
+                return (false, product, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return (true, product, ex.Message);
+            }
         }
 
         public Task<(bool IsError, IEnumerable<Product>? products, string ErrorMessage)> GetProductsPagination(int page, int numberOfProducts)

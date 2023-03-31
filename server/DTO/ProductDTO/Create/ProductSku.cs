@@ -8,8 +8,7 @@ namespace DTO.ProductDTO.Create
 {
     public class ProductSku
     {
-        public string OptionName { get; set; }
-        public string OptionValueName { get; set; }
+        public List<string> OptionValueNames { get; set; }
         public string Sku { get; set; }
         public double Price { get; set; }
     }

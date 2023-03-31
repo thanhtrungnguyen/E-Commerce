@@ -18,16 +18,26 @@ namespace WebAPI.Controllers
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var result = await _productService.GetAllProducts();
+            if (!result.IsError)
+            {
+                return Ok(result.products);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
         }
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetAsync(int id)
         {
-            return "value";
+            var result = await _productService.GetProduct(id);
+            if (!result.IsError)
+            {
+                return Ok(result.product);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
         }
 
         // POST api/<ProductsController>
@@ -35,7 +45,11 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Post([FromBody] CreateProductRequest createProductRequest)
         {
             var result = await _productService.AddProduct(createProductRequest);
-            return Ok(result.ErrorMessage);
+            if (!result.IsError)
+            {
+                return Ok();
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
         }
 
         // PUT api/<ProductsController>/5

@@ -9,5 +9,6 @@ namespace DAL.Abstractions
 {
     public interface IProductRepository : IGenereicRepository<Product>
     {
+        Task<Product>? GetProductDetailById(int id);
     }
 }

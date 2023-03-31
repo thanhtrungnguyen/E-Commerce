@@ -35,8 +35,13 @@ namespace WebAPI.Controllers
             var result = await _productService.GetProduct(id);
             if (!result.IsError)
             {
+                if (result.product is null)
+                {
+                    return NotFound();
+                }
                 return Ok(result.product);
             }
+
             return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
         }
 

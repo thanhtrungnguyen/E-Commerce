@@ -1,4 +1,6 @@
-﻿using DTO.CartDTO.Create;
+﻿using BLL.Abstractions;
+using DTO.CartDTO.Create;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,6 +11,12 @@ namespace WebAPI.Controllers
     [ApiController]
     public class CartsController : ControllerBase
     {
+        private readonly IUserService _userService;
+
+        public CartsController(IUserService userService)
+        {
+            _userService = userService;
+        }
         // GET: api/<CartsController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -25,8 +33,16 @@ namespace WebAPI.Controllers
 
         // POST api/<CartsController>
         [HttpPost]
-        public void AddToCart([FromBody] AddToCartRequest addToCartRequest)
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest addToCartRequest)
         {
+            var accessToken = Request.Cookies["accessToken"];
+            if (accessToken != null)
+            {
+                return BadRequest();
+            }
+            int userId = _userService.GetUserIdFromToken(accessToken);
+            var result = _C
         }
 
         // PUT api/<CartsController>/5

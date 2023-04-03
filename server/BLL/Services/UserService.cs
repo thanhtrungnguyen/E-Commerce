@@ -13,11 +13,13 @@ namespace BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ITokenRepository _tokenRepository;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ITokenRepository tokenRepository)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _tokenRepository = tokenRepository;
         }
 
 
@@ -125,6 +127,12 @@ namespace BLL.Services
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8));
             return hashed == passwordHash;
+        }
+
+        public int GetUserIdFromToken(string token)
+        {
+            var decoded = _tokenRepository.DecodeJwtToken(token);
+            return decoded.Id;
         }
     }
 }

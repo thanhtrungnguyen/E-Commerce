@@ -1,5 +1,6 @@
 ﻿using BLL.Abstractions;
 using BLL.Services;
+using DAL.Abstractions;
 using DAL.Entities;
 using DTO.CategoryDTO.Create;
 using DTO.UserDTO.Login;
@@ -10,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebAPI.Configurations;
-using WebAPI.Utils;
 
 namespace WebAPI.Controllers
 {
@@ -19,12 +19,12 @@ namespace WebAPI.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
+        private readonly ITokenRepository _tokenRepository;
 
-        public AuthenticationController(IUserService userService, IConfiguration configuration)
+        public AuthenticationController(IUserService userService, ITokenRepository tokenRepository)
         {
             _userService = userService;
-            _configuration = configuration;
+            _tokenRepository = tokenRepository;
         }
 
         [HttpPost("/register")]
@@ -54,35 +54,17 @@ namespace WebAPI.Controllers
             User user = await _userService.CheckExistUsernameAndPassword(loginRequest.Username, loginRequest.Password);
             if (user is not null)
             {
-                string token = GenerateJwtToken(user);
-                return Ok(token);
+                string token = _tokenRepository.CreateJwtToken(user);
+                return Ok(new { user = user, jwtToken = token });
             }
             return NotFound("Username or Password is wrong!");
 
         }
 
-        private string GenerateJwtToken(User user)
+        [HttpPost("/refreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] UserLoginRequest loginRequest)
         {
-
-            JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
-            byte[] key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig:Secret").Value);
-            SecurityTokenDescriptor securityTokenDescriptor = new SecurityTokenDescriptor()
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("Id" as string, user.Id.ToString()),
-                    new Claim("UserName" as string, user.Username.ToString()),
-                    new Claim("Role" as string, user.Role.ToString()),
-                }),
-                Expires = DateTime.UtcNow.AddHours(3),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256)
-            };
-
-            SecurityToken securityToken = jwtTokenHandler.CreateToken(securityTokenDescriptor);
-            string jwtToken = jwtTokenHandler.WriteToken(securityToken);
-            return jwtToken;
+            return BadRequest();
         }
     }
 }

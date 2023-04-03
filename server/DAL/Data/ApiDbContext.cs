@@ -13,6 +13,7 @@ namespace DAL.Data
         public DbSet<ProductSkuValue> ProductSkuValues { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Session> Sessions { get; set; }
 
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options) { }
 
@@ -24,6 +25,7 @@ namespace DAL.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            // modeling product variants
             modelBuilder
                .Entity<ProductSku>()
                .HasKey(ps => new { ps.ProductId, ps.Id });
@@ -100,6 +102,7 @@ namespace DAL.Data
                 .Property(po => po.Id)
                 .ValueGeneratedOnAdd();
 
+            // modeling others property of product 
             modelBuilder
                 .Entity<Product>()
                 .HasOne(p => p.Brand)
@@ -112,6 +115,69 @@ namespace DAL.Data
                 .WithMany(c => c.Products)
                 .HasForeignKey(x => new { x.CategoryId });
 
+            modelBuilder
+                .Entity<Product>()
+                .HasMany(p => p.OrderItems)
+                .WithOne(oi => oi.Product)
+                .HasForeignKey(x => new { x.ProductId });  // ??
+
+            modelBuilder
+                .Entity<Product>()
+                .HasMany(p => p.CartItems)
+                .WithOne(ci => ci.Product)
+                .HasForeignKey(x => new { x.ProductId });
+
+            modelBuilder
+                .Entity<Product>()
+                .HasMany(p => p.ProductDiscounts)
+                .WithOne(pd => pd.Product)
+                .HasForeignKey(x => new { x.ProductId });
+
+            // modeling user relationship
+            modelBuilder
+                .Entity<User>()
+                .HasMany(u => u.UserAddresses)
+                .WithOne(ua => ua.User)
+                .HasForeignKey(ua => new { ua.UserId });
+
+
+            modelBuilder
+                .Entity<User>()
+                .HasMany(u => u.OrderDetails)
+                .WithOne(od => od.User)
+                .HasForeignKey(od => new { od.UserId });
+
+            modelBuilder
+                .Entity<User>()
+                .HasMany(u => u.CartItems)
+                .WithOne(ci => ci.User)
+                .HasForeignKey(ci => new { ci.UserId });
+
+
+
+            // modeling order relationship
+
+            modelBuilder
+                .Entity<OrderDetail>()
+                .HasKey(od => new { od.Id });
+
+            modelBuilder
+                .Entity<OrderDetail>()
+                .HasMany(od => od.OrderItems)
+                .WithOne(oi => oi.OrderDetail)
+                .HasForeignKey(oi => new { oi.OrderDatailId });
+
+            modelBuilder
+                .Entity<OrderDetail>()
+                .HasOne(od => od.UserPayment)
+                .WithOne(up => up.OrderDetail)
+                .HasForeignKey<UserPayment>(x => new { x.OrderDetailId });
+
+            modelBuilder
+                .Entity<Session>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.Sessions)
+                .HasForeignKey(x => new { x.UserId });
 
         }
     }

@@ -22,5 +22,6 @@ namespace BLL.Abstractions
         Task<bool> CheckExistPhone(string phone);
         Task<bool> CheckExistUsername(string username);
         Task<User>? CheckExistUsernameAndPassword(string username, string password);
+
     }
 }

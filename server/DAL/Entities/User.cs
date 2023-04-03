@@ -11,7 +11,8 @@ namespace DAL.Entities
     public class User : Entity
     {
         public string Username { get; set; }
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
         public Role Role { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
@@ -19,5 +20,9 @@ namespace DAL.Entities
         public string VerifyCode { get; set; }
         public bool IsEmailConfirmed { get; set; }
         public string Avatar { get; set; }
+        public virtual ICollection<UserAddress>? UserAddresses { get; }
+        public virtual ICollection<CartItem>? CartItems { get; }
+        public virtual ICollection<OrderDetail>? OrderDetails { get; }
+        public virtual ICollection<Session>? Sessions { get; }
     }
 }

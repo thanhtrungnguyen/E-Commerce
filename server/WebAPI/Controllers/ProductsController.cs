@@ -59,14 +59,27 @@ namespace WebAPI.Controllers
 
         // PUT api/<ProductsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] CreateProductRequest updateProductRequest)
         {
+            var result = await _productService.GetProduct(id);
+            if (!result.IsError)
+            {
+                if (result.product is null)
+                {
+                    return NotFound();
+                }
+                return Ok(result.product);
+            }
+            var result2 = await _productService.UpdateProduct(id, updateProductRequest);
+
+            return StatusCode(StatusCodes.Status500InternalServerError, result.ErrorMessage);
         }
 
         // DELETE api/<ProductsController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+
         }
     }
 }

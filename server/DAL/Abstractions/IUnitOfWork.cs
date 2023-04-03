@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,16 @@ namespace DAL.Abstractions
         IProductOptionValueRepository ProductOptionValues { get; }
         IProductSkuRepository ProductSkus { get; }
         IProductSkuValueRepository ProductSkuValues { get; }
+        IProductGalleryRepository ProductGalleries { get; }
         IBrandRepository Brands { get; }
         IUserRepository Users { get; }
+        IUserAddressRepository UserAddresses { get; }
+        IUserPaymentRepository UserPayments { get; }
+        ICartItemRepository CartItems { get; }
+        IOrderItemRepository OrderItems { get; }
+        IOrderDetailRepository OrderDetails { get; }
+        ISessionRepository Sessions { get; }
+
 
         Task<int> CompleteAsync();
     }

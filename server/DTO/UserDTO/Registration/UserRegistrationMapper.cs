@@ -15,7 +15,7 @@ namespace DTO.UserDTO.Registration
         {
             CreateMap<UserRegistrationRequest, User>()
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
-                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => Role.Customer))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))

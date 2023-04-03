@@ -19,7 +19,10 @@ namespace DAL.Entities
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductSku> ProductSkus { get; set; }
         public virtual ICollection<ProductOption>? ProductOptions { get; set; }
-
+        public virtual ICollection<ProductGallery>? ProductGalleries { get; set; }
+        public virtual ICollection<ProductDiscount>? ProductDiscounts { get; set; }
+        public virtual ICollection<OrderItem>? OrderItems { get; set; }
+        public virtual ICollection<CartItem>? CartItems { get; set; }
         public Product()
         {
             ProductOptions = new HashSet<ProductOption>();

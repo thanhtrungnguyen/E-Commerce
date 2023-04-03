@@ -3,7 +3,9 @@ using BLL.Abstractions;
 using DAL.Abstractions;
 using DAL.Entities;
 using DTO.UserDTO.Registration;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Numerics;
+using System.Security.Cryptography;
 
 namespace BLL.Services
 {
@@ -60,6 +62,9 @@ namespace BLL.Services
             try
             {
                 User user = _mapper.Map<User>(userRegistration);
+                var passwordHashing = CreatePasswordHash(userRegistration.Password);
+                user.PasswordHash = passwordHashing.Hashed;
+                user.PasswordSalt = passwordHashing.Salt;
                 await _unitOfWork.Users.Add(user);
                 await _unitOfWork.CompleteAsync();
                 return (false, string.Empty);
@@ -88,9 +93,38 @@ namespace BLL.Services
 
         public async Task<User>? CheckExistUsernameAndPassword(string username, string password)
         {
-            var userExist = await _unitOfWork.Users.FindByUsernameAndPasswordAsync(username, password);
+            var userExist = await _unitOfWork.Users.FindByUsernameAsync(username);
+            if (!VerifyPasswordHash(password, userExist.PasswordHash, userExist.PasswordSalt))
+            {
+                return null;
+            }
             return userExist;
         }
+        private PasswordHashing CreatePasswordHash(string password)
+        {
+            byte[] salt = new byte[128 / 8];
+            using (var rngCsp = new RNGCryptoServiceProvider())
+            {
+                rngCsp.GetNonZeroBytes(salt);
+            }
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8));
+            return new PasswordHashing(salt, hashed);
+        }
 
+        private bool VerifyPasswordHash(string password, string passwordHash, byte[] passwordSalt)
+        {
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: passwordSalt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8));
+            return hashed == passwordHash;
+        }
     }
 }

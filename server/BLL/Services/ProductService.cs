@@ -146,14 +146,31 @@ namespace BLL.Services
             }
         }
 
-        public Task<(bool IsError, IEnumerable<Product>? products, string ErrorMessage)> GetProductsPagination(int page, int numberOfProducts)
+        public async Task<(bool IsError, IEnumerable<Product>? products, string ErrorMessage)> GetProductsPagination(int page, int numberOfProducts)
         {
-            throw new NotImplementedException();
+            IEnumerable<Product> products = Enumerable.Empty<Product>();
+            try
+            {
+                products = await _unitOfWork.Products.GetPagination(page, numberOfProducts);
+
+                return (false, products, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return (true, products, ex.Message);
+            }
         }
 
-        public Task<(bool IsError, string ErrorMessage)> UpdateProduct(Product product)
+        public async Task<(bool IsError, string ErrorMessage)> UpdateProduct(int id, CreateProductRequest product)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return (true, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return (true, ex.Message);
+            }
         }
     }
 }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace DTO.BrandDTO.Update
 {
-    internal class UpdateBrandRequest
+    public class UpdateBrandRequest
     {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

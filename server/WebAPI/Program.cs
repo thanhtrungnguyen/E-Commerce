@@ -3,10 +3,13 @@ using BLL.Services;
 using DAL;
 using DAL.Abstractions;
 using DAL.Data;
+using DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -21,7 +24,16 @@ builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
 jsonOptions.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
 
 
 
@@ -55,13 +67,14 @@ builder.Services.AddAutoMapper(Assembly.Load("DTO"));
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 
 // DAL
 builder.Services.AddDbContext<ApiDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnecttion"))
             );
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 //
 var app = builder.Build();
 
